@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "VsFileEditor": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\Develop\\Extern\\GitHub.KsWare\\KsWare.Presentation.Themes.Aero2Dark\\KsWare.Presentation.Themes.Aero2Dark.sln "
+    }
+  }
+}
