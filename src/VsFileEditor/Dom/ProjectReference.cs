@@ -25,7 +25,7 @@ public class ProjectReference : XElementWrapper {
 	public ProjFile IncludeProject {
 		get {
 			if (_includeProject == null)
-				_includeProject = ProjFile.Get(IncludeFullName);
+				_includeProject = ProjFile.LoadCached(IncludeFullName);
 			return _includeProject;
 		}
 	}

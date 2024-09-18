@@ -95,11 +95,10 @@ public class ProjFile : XDocumentWrapper {
 	
 	public static ProjFile Load(string path, SlnFile? sln = null) {
 		var proj = new ProjFile(path, sln);
-		if (sln == null) Cache[path] = proj;
 		return proj;
 	}
 	
-	public static ProjFile Get(string path) {
+	public static ProjFile LoadCached(string path) {
 		if (!Cache.TryGetValue(path, out var proj)) {
 			proj = new ProjFile(path);
 			Cache[path] = proj;
