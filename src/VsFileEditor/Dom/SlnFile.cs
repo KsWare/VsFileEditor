@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EnvDTE;
+﻿using EnvDTE;
 using EnvDTE80;
 using KsWare.VsFileEditor.Internal;
 
 namespace KsWare.VsFileEditor.Dom;
 
 /// <summary>
-/// Represents a managed sln file
+/// Represents a Visual Studio Solution (.sln) file
 /// </summary>
 public class SlnFile {
 
@@ -33,14 +26,20 @@ public class SlnFile {
 	
 	public bool IsConnected => Solution != null;
 
-	public ObservableCollectionEx<string> ProjectFiles {
+	/// <summary>
+	/// Gets all project files from this solution
+	/// </summary>
+	public IList<string> ProjectFiles {
 		get {
 			if (!_isLoaded || IsExternallyChanged) Load();
 			return _projectFiles;
 		}
 	}
 
-	public ObservableCollectionEx<ProjFile> Projects {
+	/// <summary>
+	/// Gets all projects from this solution
+	/// </summary>
+	public IList<ProjFile> Projects {
 		get {
 			if (!_isLoaded || IsExternallyChanged) Load();
 			return _projects;
@@ -67,7 +66,7 @@ public class SlnFile {
 		return file;
 	}
 
-	public ProjFile? FindProjectForPackage(string packageName) {
+	public ProjFile? GetProjectForPackage(string packageName) {
 		return Projects.FirstOrDefault(p => string.Equals(p.PackageId, packageName, StringComparison.OrdinalIgnoreCase));
 	}
 

@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using KsWare.VsFileEditor.Dom;
 
 namespace KsWare.VsFileEditor;
@@ -28,7 +29,9 @@ public static class ProjUtils {
 		var ext = Path.GetExtension(name);
 		name = ProjectExtensions.Contains(ext) ? Path.GetFileNameWithoutExtension(name) : name;
 		var search = ProjectExtensions.Contains(ext) ? $"{name}{ext}" : $"{name}.??proj";
-		var files =  Directory.EnumerateFiles(projectRoot, search, SearchOption.AllDirectories).Where(f=>string.Equals(Path.GetFileNameWithoutExtension(f),name,StringComparison.OrdinalIgnoreCase)).ToArray();
+		var files =  Directory.EnumerateFiles(projectRoot, search, SearchOption.AllDirectories)
+			.Where(f=>string.Equals(Path.GetFileNameWithoutExtension(f),name,StringComparison.OrdinalIgnoreCase))
+			.ToArray();
 		if (files.Length == 0) return null;
 		if (files.Length == 1) return files[0];
 		if(mustBeUnique) throw new ArgumentException("Ambiguous projects found!");

@@ -3,6 +3,7 @@ using System.Runtime.InteropServices.ComTypes;
 using EnvDTE80;
 
 namespace KsWare.VsFileEditor;
+
 internal static class DteUtils {
 
 	public static DTE2? FindDevEnv(string solutionPath) {
