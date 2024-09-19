@@ -4,15 +4,19 @@ using KsWare.VsFileEditor.Dom.Base;
 
 namespace KsWare.VsFileEditor.Dom;
 
+/// <summary>
+/// Represents a Visual Studio project file.
+/// </summary>
+/// <seealso cref="XDocumentWrapper" />
 public class ProjFile : XDocumentWrapper {
 
-	private static readonly Dictionary<string, ProjFile> Cache = new Dictionary<string, ProjFile>(StringComparer.OrdinalIgnoreCase);
+	public static readonly Dictionary<string, ProjFile> Cache = new Dictionary<string, ProjFile>(StringComparer.OrdinalIgnoreCase);
 
 	public ProjFile(string file, SlnFile? slnFile = null) : base(file) {
-		SolutionFile = slnFile;
+		Solution = slnFile;
 	}
 
-	public SlnFile? SolutionFile { get; set; }
+	public SlnFile? Solution { get; set; }
 
 	public ProjectReference[] ProjectReferences {
 		get {
@@ -26,7 +30,7 @@ public class ProjFile : XDocumentWrapper {
 		get {
 			var projectReferences = Root.Descendants(NS + "PackageReference")
 				.Where(x => x.Attribute("Include")?.Value != null);
-			return projectReferences.Select(pr=>new PackageReference(pr)).ToArray();
+			return projectReferences.Select(pr=>new PackageReference(pr,this)).ToArray();
 		}
 	}
 
@@ -63,21 +67,21 @@ public class ProjFile : XDocumentWrapper {
 	}
 
 	public void AddPackageReference(string packageName,string? version = null, string? condition = null) {
-		if (version == null || version.Contains('*')) version = NuGetUtils.GetAvailableVersion(packageName);
+		if (version == null || version.Contains('*')) version = NuGetUtils.GetAvailableVersion(packageName)
+			?? throw new ArgumentNullException(nameof(version), "Package for specified version not found.");
 
-		var newPackageReference = new XElement(NS + "PackageReference",
+		var element = new XElement(NS + "PackageReference",
 			new XAttribute("Include", packageName),
 			new XAttribute("Version", version)
 			);
-		newPackageReference.SetAttributeValue("Condition", condition);
-		var itemGroup = GetOrCreateItemGroupForChild(new PackageReference(newPackageReference));
-		itemGroup.Add(newPackageReference);
+		element.SetAttributeValue("Condition", condition);
+		var itemGroup = GetOrCreateItemGroupForChild(new PackageReference(element,this));
+		itemGroup.Add(element);
 	}
 
 	public ProjectReference? FindProjectReferenceForPackage(string packageName) {
-		return ProjectReferences.FirstOrDefault(pr => pr.Include.EndsWith(packageName+".csproj", StringComparison.OrdinalIgnoreCase) || pr.IncludeProject.PackageId==packageName);
+		return ProjectReferences.FirstOrDefault(pr => ProjUtils.ProjectExtensions.Contains(Path.GetExtension(pr.Include??"")) || pr.IncludeˑProject?.PackageId==packageName);
 	}
-
 
 	private XElement? FindItemGroupWithChild(string childName) {
 		return Root.Descendants(NS + "ItemGroup")

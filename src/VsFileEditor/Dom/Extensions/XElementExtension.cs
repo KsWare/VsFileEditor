@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace KsWare.VsFileEditor.Dom;
+namespace KsWare.VsFileEditor.Dom.Extensions;
 
 public static class XElementExtension {
 

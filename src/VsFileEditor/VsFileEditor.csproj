@@ -45,6 +45,7 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <None Include="..\..\VsFileEditor.sln" Link="Properties\VsFileEditor.sln" />
   </ItemGroup>
 
   <ItemGroup>
